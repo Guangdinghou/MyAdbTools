@@ -18,9 +18,12 @@ class mainWin(wfform_main.RootFrame):
     def on_device_refresh(self, event):
         print('hello')
         result = os.popen("adb devices").readlines()
+
+        self.tv_out.Clear()
         self.device_list.clear()
         self.choice_device.Clear()
         for line in result:
+            self.tv_out.AppendText(line)
             if len(line) == 1:
                 result.remove(line)
                 continue
