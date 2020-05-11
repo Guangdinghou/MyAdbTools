@@ -1,7 +1,7 @@
 import os
 
 import wx
-
+from src.base import Constants
 # 导入mywin.py中内容
 
 
@@ -9,19 +9,44 @@ import wx
 from src.beans.device_info import DeviceInfo
 from src.widget import wfform_main
 
+
 # wxFormBuilder生成UI框架
 class mainWin(wfform_main.RootFrame):
     device_list = []
+    app_list = []
 
+    def doShell(self, shell):
+        self.tv_out.AppendText(shell)
+        self.tv_out.AppendText("\n")
+
+    def makeText(self, shell):
+        content = ''
+        if self.choice_device.GetSelection() != -1:
+            content = ' -s ' + self.device_list[self.choice_device.GetSelection()]
+        shell = shell % content;
+        return shell
 
     # 实现Button控件的响应函数showMessage
+    def on_app_refresh(self, event):
+        shell = self.makeText(Constants.adb_get_apps);
+        result = os.popen(shell).readlines()
+        self.app_list.clear()
+        self.doShell(shell)
+        self.cb_package_name.Clear()
+        for line in result:
+            self.doShell(line)
+            package_name = line.replace("package:", '')
+            self.app_list.append(package_name)
+            self.cb_package_name.Append(package_name)
+
     def on_device_refresh(self, event):
         print('hello')
-        result = os.popen("adb devices").readlines()
-
+        shell = Constants.adb_devices
+        result = os.popen(Constants.adb_devices).readlines()
         self.tv_out.Clear()
         self.device_list.clear()
         self.choice_device.Clear()
+        self.doShell(shell)
         for line in result:
             self.tv_out.AppendText(line)
             if len(line) == 1:

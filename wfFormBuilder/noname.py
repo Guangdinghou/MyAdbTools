@@ -17,7 +17,7 @@ import wx.xrc
 class RootFrame ( wx.Frame ):
 
 	def __init__( self, parent ):
-		wx.Frame.__init__ ( self, parent, id = wx.ID_ANY, title = wx.EmptyString, pos = wx.DefaultPosition, size = wx.Size( 600,650 ), style = wx.DEFAULT_FRAME_STYLE|wx.TAB_TRAVERSAL )
+		wx.Frame.__init__ ( self, parent, id = wx.ID_ANY, title = wx.EmptyString, pos = wx.DefaultPosition, size = wx.Size( 960,650 ), style = wx.DEFAULT_FRAME_STYLE|wx.TAB_TRAVERSAL )
 
 		self.SetSizeHints( wx.Size( 500,300 ), wx.DefaultSize )
 
@@ -64,6 +64,9 @@ class RootFrame ( wx.Frame ):
 		cb_package_nameChoices = []
 		self.cb_package_name = wx.ComboBox( self, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize, cb_package_nameChoices, 0 )
 		bsizer_package_choice.Add( self.cb_package_name, 1, wx.ALL, 5 )
+
+		self.btn_refresh_app = wx.Button( self, wx.ID_ANY, u"刷新应用", wx.DefaultPosition, wx.DefaultSize, 0 )
+		bsizer_package_choice.Add( self.btn_refresh_app, 0, wx.ALL, 5 )
 
 
 		bSizer2.Add( bsizer_package_choice, 0, wx.EXPAND, 5 )
@@ -118,6 +121,7 @@ class RootFrame ( wx.Frame ):
 
 		# Connect Events
 		self.btn_refresh_device.Bind( wx.EVT_BUTTON, self.on_device_refresh )
+		self.btn_refresh_app.Bind( wx.EVT_BUTTON, self.on_app_refresh )
 		self.btn_get_shell.Bind( wx.EVT_BUTTON, self.on_make_shell )
 		self.btn_do_shell.Bind( wx.EVT_BUTTON, self.on_do_shell )
 
@@ -127,6 +131,9 @@ class RootFrame ( wx.Frame ):
 
 	# Virtual event handlers, overide them in your derived class
 	def on_device_refresh( self, event ):
+		event.Skip()
+
+	def on_app_refresh( self, event ):
 		event.Skip()
 
 	def on_make_shell( self, event ):

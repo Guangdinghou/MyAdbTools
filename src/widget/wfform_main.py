@@ -67,6 +67,9 @@ class RootFrame(wx.Frame):
                                            cb_package_nameChoices, 0)
         bsizer_package_choice.Add(self.cb_package_name, 1, wx.ALL, 5)
 
+        self.btn_refresh_app = wx.Button(self, wx.ID_ANY, u"刷新应用", wx.DefaultPosition, wx.DefaultSize, 0)
+        bsizer_package_choice.Add(self.btn_refresh_app, 0, wx.ALL, 5)
+
         bSizer2.Add(bsizer_package_choice, 0, wx.EXPAND, 5)
 
         m_radioBox2Choices = [u"输入文字", u"快捷命令", u"自由命令", u"自定义"]
@@ -119,14 +122,19 @@ class RootFrame(wx.Frame):
         self.btn_refresh_device.Bind(wx.EVT_BUTTON, self.on_device_refresh, self.btn_refresh_device)
         self.btn_get_shell.Bind(wx.EVT_BUTTON, self.on_make_shell, self.btn_get_shell)
         self.btn_do_shell.Bind(wx.EVT_BUTTON, self.on_do_shell, self.btn_do_shell)
+        self.btn_refresh_app.Bind(wx.EVT_BUTTON, self.on_app_refresh, self.btn_refresh_app)
         self.m_notebook1.AddPage(tag_input(self.m_notebook1), "自定义")
         self.m_notebook1.AddPage(tag_fast(self.m_notebook1), "快捷方式")
+        # self.m_notebook1.AddPage(tag_install(self.m_notebook1), "安装")
 
     def __del__(self):
         pass
 
     # Virtual event handlers, overide them in your derived class
     def on_device_refresh(self, event):
+        event.Skip()
+
+    def on_app_refresh(self, event):
         event.Skip()
 
     def on_make_shell(self, event):
@@ -152,6 +160,8 @@ class tag_input(wx.Panel):
                                            wx.TE_MULTILINE)
         tag_container.Add(self.tv_custom_input, 1, wx.ALL | wx.EXPAND, 5)
 
+        dt = MyFileDropTarget(self.tv_custom_input)  # 将文本控件作为释放到的目标
+        self.tv_custom_input.SetDropTarget(dt)
         self.SetSizer(tag_container)
         self.Layout()
 
@@ -188,3 +198,15 @@ class tag_fast(wx.Panel):
     # Virtual event handlers, overide them in your derived class
     def on_shell_select(self, event):
         event.Skip()
+
+
+class MyFileDropTarget(wx.FileDropTarget):
+    # 声明释放到的目标
+    def __init__(self, window):
+        wx.FileDropTarget.__init__(self)
+        self.window = window
+
+    def OnDropFiles(self, x, y, filenames):  # 释放文件处理函数数据
+        # self.window.AppendText("\n%d file(s) dropped at (%d,%d):\n" % (len(filenames),x,y))
+        for file in filenames:
+            self.window.AppendText(file+'\n')
