@@ -25,7 +25,9 @@ class mainWin(wfform_main.RootFrame):
             content = ' -s ' + self.device_list[self.choice_device.GetSelection()]
         shell = shell % content;
         return shell
-
+    def on_text_change_listener(self,event):
+        index=self.m_notebook1.GetSelection()
+        print('index:'+index)
     # 实现Button控件的响应函数showMessage
     def on_app_refresh(self, event):
         shell = self.makeText(Constants.adb_get_apps);
@@ -35,9 +37,10 @@ class mainWin(wfform_main.RootFrame):
         self.cb_package_name.Clear()
         for line in result:
             self.doShell(line)
-            package_name = line.replace("package:", '')
-            self.app_list.append(package_name)
-            self.cb_package_name.Append(package_name)
+            package_name = line.replace("package:", '').replace('\n', '')
+            if len(package_name) > 0:
+                self.app_list.append(package_name)
+                self.cb_package_name.Append(package_name)
 
     def on_device_refresh(self, event):
         print('hello')
@@ -72,7 +75,8 @@ class mainWin(wfform_main.RootFrame):
                     self.SetStatusText(line)
         if self.choice_device.GetColumns() > 0:
             self.choice_device.SetSelection(0)
-
+    def on_shell_select(self,event):
+        print('hhh')
 
 if __name__ == '__main__':
     # 下面是使用wxPython的固定用法

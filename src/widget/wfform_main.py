@@ -123,8 +123,10 @@ class RootFrame(wx.Frame):
         self.btn_get_shell.Bind(wx.EVT_BUTTON, self.on_make_shell, self.btn_get_shell)
         self.btn_do_shell.Bind(wx.EVT_BUTTON, self.on_do_shell, self.btn_do_shell)
         self.btn_refresh_app.Bind(wx.EVT_BUTTON, self.on_app_refresh, self.btn_refresh_app)
-        self.m_notebook1.AddPage(tag_input(self.m_notebook1), "自定义")
-        self.m_notebook1.AddPage(tag_fast(self.m_notebook1), "快捷方式")
+        self.tag_input = tag_input(self.m_notebook1)
+        self.tag_fast = tag_fast(self.m_notebook1)
+        self.m_notebook1.AddPage(self.tag_input, "自定义")
+        self.m_notebook1.AddPage(self.tag_fast, "快捷方式")
         # self.m_notebook1.AddPage(tag_install(self.m_notebook1), "安装")
 
     def __del__(self):
@@ -153,20 +155,24 @@ class tag_input(wx.Panel):
     def __init__(self, parent, id=wx.ID_ANY, pos=wx.DefaultPosition, size=wx.Size(500, 300), style=wx.TAB_TRAVERSAL,
                  name=wx.EmptyString):
         wx.Panel.__init__(self, parent, id=id, pos=pos, size=size, style=style, name=name)
-
+        self.parents = parent
         tag_container = wx.BoxSizer(wx.VERTICAL)
 
         self.tv_custom_input = wx.TextCtrl(self, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize,
                                            wx.TE_MULTILINE)
         tag_container.Add(self.tv_custom_input, 1, wx.ALL | wx.EXPAND, 5)
-
-        dt = MyFileDropTarget(self.tv_custom_input)  # 将文本控件作为释放到的目标
+        # self.tv_custom_input.Bind(wx.EVT_TEXT, self.on_text_change_listener, self.tv_custom_input)
+        dt = MyFileDropTarget(self)  # 将文本控件作为释放到的目标
         self.tv_custom_input.SetDropTarget(dt)
         self.SetSizer(tag_container)
         self.Layout()
 
     def __del__(self):
         pass
+
+    def on_text_change_listener(self, file):
+        print("哟呵，有变化" + file)
+        self.tv_custom_input.AppendText(file)
 
 
 ###########################################################################
@@ -202,11 +208,12 @@ class tag_fast(wx.Panel):
 
 class MyFileDropTarget(wx.FileDropTarget):
     # 声明释放到的目标
-    def __init__(self, window):
+    def __init__(self, tag_input):
         wx.FileDropTarget.__init__(self)
-        self.window = window
+        self.window = tag_input
 
     def OnDropFiles(self, x, y, filenames):  # 释放文件处理函数数据
         # self.window.AppendText("\n%d file(s) dropped at (%d,%d):\n" % (len(filenames),x,y))
         for file in filenames:
-            self.window.AppendText(file+'\n')
+            # self.window.Clear()
+            self.window.on_text_change_listener(file)
