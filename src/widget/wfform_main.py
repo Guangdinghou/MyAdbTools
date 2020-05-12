@@ -172,7 +172,7 @@ class tag_input(wx.Panel):
 
     def on_text_change_listener(self, file):
         print("哟呵，有变化" + file)
-        self.tv_custom_input.AppendText(file)
+        self.tv_custom_input.AppendText(file+"\n")
 
 
 ###########################################################################
