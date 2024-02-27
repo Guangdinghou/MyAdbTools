@@ -15,7 +15,6 @@ class MainActivity(wx.Frame):
         self.panel = wx.Panel(parent=self)
         self.hbox1 = wx.BoxSizer()
 
-        # self.control = wx.TextCtrl(self, style=wx.TE_MULTILINE)
         self.CreateStatusBar()
         # 这里先创建列表项目，然后再绑定到对应的 File 按钮中。
         self.create_menu_bar()
